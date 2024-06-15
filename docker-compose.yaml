@@ -13,7 +13,7 @@ services:
     hostname: postgresdb
 
   accessment:
-    image:  machine-test:latest
+    image:  vajidhussain/machine-test
     build: .
     restart: on-failure
     container_name: accessment-container
