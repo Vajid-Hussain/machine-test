@@ -18,6 +18,7 @@ var (
 var (
 	ErrNoActiveJob       = errors.New("no active job's are available")
 	ErrJobAlreadyApplied = errors.New("job alredy applied or no job exist")
+	ErrNoAppliedJob = errors.New("you don't have any applied job")
 )
 
 // Admin usecase

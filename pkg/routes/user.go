@@ -18,4 +18,10 @@ func UserRoutes(engin fiber.Router, user *handler.UserHandler, job *handler.JobH
 	{
 		jobManagement.Get("/", job.GetJob)
 	}
+
+	jobApply := engin.Group("/applied")
+	{
+		jobApply.Get("/", job.GetAppliedJob)
+		jobApply.Post("/", job.ApplyJob)
+	}
 }

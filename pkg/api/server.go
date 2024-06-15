@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 )
 
 type Server struct {
@@ -21,6 +22,8 @@ func InitServer(admin *handler.AdminHandler, user *handler.UserHandler, job *han
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${status} - ${method} ${path}\n",
 	}))
+
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	routes.AdminRoutes(app.Group("/admin"), admin, job)
 	routes.UserRoutes(app.Group("/"), user, job)

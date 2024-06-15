@@ -10,4 +10,7 @@ type IJobUseCase interface {
 	CreateJob(*requestmodels.CreateJob) (*responsemodels.Job, error)
 	DeleteJob(*requestmodels.DeleteJob) error
 	GetJob(*requestmodels.JobSearch, *requestmodels.Pagination) (*[]responsemodels.Job, error)
+	GetAppliedJob(*requestmodels.GetAppliedJob, *requestmodels.Pagination) (*[]responsemodels.JobApplication, error)
+	ApplyJob(*requestmodels.JobApplication) (*responsemodels.JobApplication, error)
+	GetJobDetails(*requestmodels.JobID, *requestmodels.Pagination) (*[]responsemodels.JobApplicationAdmin, error)
 }

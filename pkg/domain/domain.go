@@ -36,7 +36,7 @@ type Jobs struct {
 	Title            string
 	Description      string
 	PostOn           time.Time
-	TotalApplication int
+	TotalApplication int `gorm:"default:0"`
 	CompanyName      string
 	PostedBy         string
 	Status           string `gorm:"default:active"`

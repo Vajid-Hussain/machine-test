@@ -1,0 +1,425 @@
+basePath: /
+definitions:
+  requestmodels.AdminLogin:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 5
+        type: string
+    type: object
+  requestmodels.CreateJob:
+    properties:
+      company_name:
+        type: string
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - company_name
+    - description
+    - title
+    type: object
+  requestmodels.DeleteJob:
+    properties:
+      jobID:
+        type: string
+    type: object
+  requestmodels.JobApplication:
+    properties:
+      job_application_id:
+        type: string
+    required:
+    - job_application_id
+    type: object
+  requestmodels.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 5
+        type: string
+    type: object
+  requestmodels.UserSignup:
+    properties:
+      address:
+        type: string
+      confirmPassword:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 5
+        type: string
+      profileHeadline:
+        maxLength: 30
+        type: string
+    required:
+    - address
+    - name
+    type: object
+  responsemodels.Response:
+    properties:
+      error: {}
+      message:
+        type: string
+      result: {}
+      status_code:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is a sample fiber project server.
+  termsOfService: http://swagger.io/terms/
+  title: Machine task
+  version: "1.0"
+paths:
+  /admin/job:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing job posting
+      parameters:
+      - description: Job Delete
+        in: body
+        name: job
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.DeleteJob'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted job
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Delete a job
+      tags:
+      - Job Management Admin
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of jobs with pagination and optional search
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved jobs
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Get jobs
+      tags:
+      - Job Management Admin
+    post:
+      consumes:
+      - application/json
+      description: Create a new job posting
+      parameters:
+      - description: Job Create
+        in: body
+        name: job
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.CreateJob'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created job
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Create a job
+      tags:
+      - Job Management Admin
+  /admin/job/details:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a specific job with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Job ID
+        in: query
+        name: jobid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved job details
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Get complete details of job
+      tags:
+      - Job Management Admin
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate an admin and return a token
+      parameters:
+      - description: Admin login data
+        in: body
+        name: adminLogin
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.AdminLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully authenticated
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      summary: Admin login
+      tags:
+      - admin
+  /applied:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of applied jobs with pagination and optional search
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved applied jobs
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Get applied jobs
+      tags:
+      - apply job user
+    post:
+      consumes:
+      - application/json
+      description: Submit a job application
+      parameters:
+      - description: Job Application
+        in: body
+        name: jobApplication
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.JobApplication'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully applied for the job
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Apply for a job
+      tags:
+      - apply job user
+  /job:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of jobs with pagination and optional search
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved jobs
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Get jobs
+      tags:
+      - user job
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a token
+      parameters:
+      - description: User login data
+        in: body
+        name: userLogin
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully authenticated
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      summary: User login
+      tags:
+      - user
+  /resume:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a resume file and decode its content
+      parameters:
+      - description: Resume file
+        in: formData
+        name: resume
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resume successfully added
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      security:
+      - authorization: []
+      summary: Upload and decode resume
+      tags:
+      - user job
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Signup a new user
+      parameters:
+      - description: User signup data
+        in: body
+        name: userProfile
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodels.UserSignup'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: account created
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/responsemodels.Response'
+      summary: Create a new user account
+      tags:
+      - user
+securityDefinitions:
+  authorization:
+    description: 'IMPORTANT: TYPE "Bearer" FOLLOWED BY A SPACE AND JWT TOKEN.'
+    in: header
+    name: authorization
+    type: apiKey
+swagger: "2.0"

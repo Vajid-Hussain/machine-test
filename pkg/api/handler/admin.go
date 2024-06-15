@@ -18,6 +18,16 @@ func NewAdminHandler(usecase interfaceUseCase.IAdminUseCase) *AdminHandler {
 	return &AdminHandler{useCase: usecase}
 }
 
+// @Summary Admin login
+// @Description Authenticate an admin and return a token
+// @Tags admin
+// @Accept  json
+// @Produce  json
+// @Param adminLogin body requestmodels.AdminLogin true "Admin login data"
+// @Success 200 {object} responsemodels.Response "Successfully authenticated"
+// @Failure 400 {object} responsemodels.Response "Invalid input"
+// @Failure 401 {object} responsemodels.Response "Unauthorized"
+// @Router /admin/login [post]
 func (u *AdminHandler) AdminLogin(ctx *fiber.Ctx) error {
 	var req requestmodels.AdminLogin
 

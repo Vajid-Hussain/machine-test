@@ -47,10 +47,13 @@ func (d *jobRepository) InsertResumereq(req *requestmodels.UserResumeData) (*res
 	return &insertedData, nil
 }
 
-func (d *jobRepository) ApplyJob(req *requestmodels.JobApplication) (*responsemodels.JobApplication, error){
+func (d *jobRepository) ApplyJob(req *requestmodels.JobApplication) (*responsemodels.JobApplication, error) {
 	var res responsemodels.JobApplication
-	query:= "INSERT INTO job_applies (user_id, job_id, apply_time) SELECT $1, $2, now() WHERE NOT EXISTS (SELECT 1 FROM job_applies WHERE user_id = $1 AND job_id = $2) RETURNING *"
-	result:= d.DB.Raw(query, req.UserID, req.JobApplicationID).Scan(&res)
+	query := `
+			INSERT INTO job_applies (user_id, job_id, apply_time) SELECT $1, $2, now() 
+			WHERE NOT EXISTS (SELECT 1 FROM job_applies WHERE user_id = $1 AND job_id = $2)  AND EXISTS (SELECT 1 FROM jobs WHERE id = $2) RETURNING *
+			`
+	result := d.DB.Raw(query, req.UserID, req.JobApplicationID).Scan(&res)
 	if result.Error != nil {
 		return nil, responsemodels.ErrInternalServer
 	}
@@ -61,7 +64,20 @@ func (d *jobRepository) ApplyJob(req *requestmodels.JobApplication) (*responsemo
 	return &res, nil
 }
 
+func (d *jobRepository) GetAppliedJob(job *requestmodels.GetAppliedJob, pagination *requestmodels.Pagination) (*[]responsemodels.JobApplication, error) {
+	var res []responsemodels.JobApplication
+	query := `
+			SELECT * FROM job_applies ja INNER JOIN users u ON u.id = ja.user_id INNER JOIN jobs j ON j.id = ja.job_id 
+			WHERE u.id= $1 AND u.status= 'active' AND j.status='active' AND j.title ILIKE '%' || $2 || '%' 
+			OFFSET $3 FETCH FIRST $4 ROWS ONLY
+			`
+	result := d.DB.Raw(query, job.UserID, job.Job, pagination.Offset, pagination.Limit).Scan(&res)
+	if result.Error != nil {
+		return nil, responsemodels.ErrInternalServer
+	}
 
+	return &res, nil
+}
 
 // ------------------------------------- Admin Job ----------------------------------------------
 
@@ -98,8 +114,20 @@ func (d *jobRepository) GetJob(prefix *requestmodels.JobSearch, pagination *requ
 	if result.Error != nil {
 		return nil, responsemodels.ErrInternalServer
 	}
-	if result.RowsAffected == 0 {
-		return nil, responsemodels.ErrNoActiveJob
+
+	return &res, nil
+}
+
+func (d *jobRepository) GetJobDetails(job *requestmodels.JobID, pagination *requestmodels.Pagination) (*[]responsemodels.JobApplicationAdmin, error) {
+	var res []responsemodels.JobApplicationAdmin
+	query := `
+			SELECT * FROM job_applies ja INNER JOIN users u ON u.id = ja.user_id INNER JOIN jobs j ON j.id = ja.job_id 
+			WHERE j.id= $1 AND j.status='active'
+			OFFSET $2 FETCH FIRST $3 ROWS ONLY
+			`
+	result := d.DB.Raw(query, job.JobID, pagination.Offset, pagination.Limit).Scan(&res)
+	if result.Error != nil {
+		return nil, responsemodels.ErrInternalServer
 	}
 
 	return &res, nil

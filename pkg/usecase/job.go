@@ -91,15 +91,41 @@ func (d jobUseCase) DecodeResume(reqResume requestmodels.Resume) (*responsemodel
 	return d.repo.InsertResumereq(&resumeData)
 }
 
+func (d *jobUseCase) GetAppliedJob(job *requestmodels.GetAppliedJob, pagination *requestmodels.Pagination) (res *[]responsemodels.JobApplication, err error) {
+	pagination.Offset, err = utils.Pagination(pagination.Limit, pagination.Offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return d.repo.GetAppliedJob(job, pagination)
+}
+
+func (d *jobUseCase) ApplyJob(req *requestmodels.JobApplication) (*responsemodels.JobApplication, error) {
+	return d.repo.ApplyJob(req)
+}
+
 func (d *jobUseCase) CreateJob(job *requestmodels.CreateJob) (*responsemodels.Job, error) {
 	return d.repo.CreateJob(job)
 }
 
 func (d *jobUseCase) GetJob(prefix *requestmodels.JobSearch, pagination *requestmodels.Pagination) (res *[]responsemodels.Job, err error) {
 	pagination.Offset, err = utils.Pagination(pagination.Limit, pagination.Offset)
+	if err != nil {
+		return nil, err
+	}
+
 	return d.repo.GetJob(prefix, pagination)
 }
 
 func (d *jobUseCase) DeleteJob(req *requestmodels.DeleteJob) error {
 	return d.repo.DeleteJob(req)
+}
+
+func (d *jobUseCase) GetJobDetails(job *requestmodels.JobID, pagination *requestmodels.Pagination) (res *[]responsemodels.JobApplicationAdmin, err error) {
+	pagination.Offset, err = utils.Pagination(pagination.Limit, pagination.Offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return d.repo.GetJobDetails(job, pagination)
 }

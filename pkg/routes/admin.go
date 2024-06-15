@@ -14,7 +14,8 @@ func AdminRoutes(engin fiber.Router, admin *handler.AdminHandler, job *handler.J
 	jobManagement := engin.Group("/job")
 	{
 		jobManagement.Post("/", job.CreateJob)
-		jobManagement.Get("/", job.GetJob)
+		jobManagement.Get("/", job.GetJobAdmin)
 		jobManagement.Delete("/", job.DeleteJob)
+		jobManagement.Get("/details", job.GetJobDetails)
 	}
 }

@@ -18,6 +18,15 @@ func NewUserHandler(usecase interfaceUseCase.IUserUseCase) *UserHandler {
 	return &UserHandler{useCase: usecase}
 }
 
+// @Summary Create a new user account
+// @Description Signup a new user
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param userProfile body requestmodels.UserSignup true "User signup data"
+// @Success 201 {object} responsemodels.Response "account created"
+// @Failure 400 {object} responsemodels.Response "Invalid input"
+// @Router /signup [post]
 func (u *UserHandler) UserSignup(ctx *fiber.Ctx) error {
 	var userProfile requestmodels.UserSignup
 
@@ -41,6 +50,16 @@ func (u *UserHandler) UserSignup(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(responsemodels.Responses(http.StatusCreated, "account created", res, nil))
 }
 
+// @Summary User login
+// @Description Authenticate a user and return a token
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param userLogin body requestmodels.UserLogin true "User login data"
+// @Success 200 {object} responsemodels.Response "Successfully authenticated"
+// @Failure 400 {object} responsemodels.Response "Invalid input"
+// @Failure 401 {object} responsemodels.Response "Unauthorized"
+// @Router /login [post]
 func (u *UserHandler) UserLogin(ctx *fiber.Ctx) error {
 	var req requestmodels.UserLogin
 

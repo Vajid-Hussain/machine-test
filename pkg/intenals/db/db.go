@@ -83,5 +83,34 @@ func CheckAndCreateAdmin(DB *gorm.DB) error {
 		return responsemodels.ErrInternalServer
 	}
 
+	trigger(DB)
+
 	return nil
 }
+
+func trigger(db *gorm.DB) error {
+
+	db.Exec(`
+			CREATE OR REPLACE FUNCTION update_job_application_count()
+			RETURNS TRIGGER 
+			LANGUAGE PLPGSQL
+			AS 
+			$$
+			BEGIN 
+			UPDATE jobs SET total_application = total_application+1 WHERE id = new.job_id;
+			RETURN NEW;
+			END;
+			$$
+	`)
+
+	db.Exec(`
+		CREATE TRIGGER update_job_application_count_trigger 
+		AFTER INSERT 
+		ON job_applies 
+		FOR EACH ROW
+		EXECUTE PROCEDURE update_job_application_count();
+	`)
+
+	return nil
+}
+

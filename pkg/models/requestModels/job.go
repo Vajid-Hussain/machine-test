@@ -32,10 +32,10 @@ type UserResumeData struct {
 type CreateJob struct {
 	Title            string    `json:"title" validate:"required"`
 	Description      string    `json:"description" validate:"required"`
-	PostOn           time.Time `json:"post_on"`
-	TotalApplication int       `json:"total_application"`
+	PostOn           time.Time `swaggerignore:"true"`
+	TotalApplication int       `swaggerignore:"true"`
 	CompanyName      string    `json:"company_name" validate:"required"`
-	PostedBy         string    `json:"posted_by"`
+	PostedBy         string    `swaggerignore:"true"`
 }
 
 type DeleteJob struct {
@@ -52,6 +52,15 @@ type JobSearch struct {
 }
 
 type JobApplication struct {
-	UserID           string `json:"user_id" validate:"required"`
+	UserID           string ` swaggerignore:"true"`
 	JobApplicationID string `json:"job_application_id" validate:"required"`
+}
+
+type GetAppliedJob struct {
+	Job    string `query:"search"`
+	UserID string
+}
+
+type JobID struct {
+	JobID string `query:"jobid"`
 }

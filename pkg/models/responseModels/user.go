@@ -32,9 +32,24 @@ type UserResumeData struct {
 }
 
 type JobApplication struct {
-	ID        string    `json:"id"`
-	UserID    string    `json:"user_id"`
-	JobID     string    `json:"job_id"`
+	ID        string `json:"id"`
+	UserID    string `json:"user_id"`
+	Name      string `json:"posted_by"`
+	Email     string `json:"email"`
+	JobID     string `json:"job_id"`
+	Title     string
+	ApplyTime time.Time `json:"apply_time"`
+	Status    string    `json:"status"`
+}
+
+type JobApplicationAdmin struct {
+	ID        string `json:"id"`
+	UserID    string `json:"user_id"`
+	Name      string `json:"posted_by"`
+	Email     string `json:"email"`
+	JobID     string `json:"job_id"`
+	Address   string
+	Title     string
 	ApplyTime time.Time `json:"apply_time"`
 	Status    string    `json:"status"`
 }
