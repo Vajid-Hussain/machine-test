@@ -9,8 +9,16 @@ var (
 	ErrNoEmailExist   = errors.New("no account found with the provided email address. Please use a different email")
 )
 
-// Inventory Repository
-var ()
+// User Usecase
+var (
+	ErrWrongContecntTypeResume = errors.New("wrong content type")
+)
+
+// Job Repository
+var (
+	ErrNoActiveJob       = errors.New("no active job's are available")
+	ErrJobAlreadyApplied = errors.New("job alredy applied or no job exist")
+)
 
 // Admin usecase
 var (

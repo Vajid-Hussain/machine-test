@@ -1,14 +1,22 @@
 package utils
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
 	"time"
 
+	"github.com/Vajid-Hussain/machine-test/pkg/intenals/config"
 	responsemodels "github.com/Vajid-Hussain/machine-test/pkg/models/responseModels"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/go-playground/validator"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -129,4 +137,42 @@ func Pagination(limit, offset string) (string, error) {
 	}
 
 	return strconv.Itoa((offsetInt * limitInt) - limitInt), nil
+}
+
+func CreateSession(cfg config.S3Bucket) *session.Session {
+	sess := session.Must(session.NewSession(
+		&aws.Config{
+			Region: aws.String(cfg.Region),
+			Credentials: credentials.NewStaticCredentials(
+				cfg.AccessKeyID,
+				cfg.AccessKeySecret,
+				"",
+			),
+			Endpoint: aws.String(""),
+		},
+	))
+	return sess
+}
+
+func CreateS3Session(sess *session.Session) *s3.S3 {
+	s3Session := s3.New(sess)
+	return s3Session
+}
+
+func UploadImageToS3(file []byte, sess *session.Session) (string, error) {
+
+	fileName := uuid.New().String()
+
+	uploader := s3manager.NewUploader(sess)
+	upload, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("hyper-hive-data"),
+		Key:    aws.String("chat media/" + fileName),
+		Body:   aws.ReadSeekCloser(bytes.NewReader(file)),
+		ACL:    aws.String("public-read"),
+	})
+	if err != nil {
+		fmt.Println("err from s3 upload", err)
+		return "", err
+	}
+	return upload.Location, nil
 }

@@ -46,6 +46,9 @@ func ConnectDatabase(DB *config.SqlDatabase) (*gorm.DB, error) {
 	// Creating table by using automigrate
 	err = gormConnection.AutoMigrate(
 		domain.Users{},
+		domain.UserResumeData{},
+		domain.Jobs{},
+		domain.JobApply{},
 	)
 	if err != nil {
 		return nil, err
@@ -62,9 +65,9 @@ func ConnectDatabase(DB *config.SqlDatabase) (*gorm.DB, error) {
 
 func CheckAndCreateAdmin(DB *gorm.DB) error {
 	var (
-		Name     = "Synlabs"
-		Email    = "Synlabs@gmail.com"
-		Password = "Synlabs"
+		Name     = "sSynlabs"
+		Email    = "synlabs@gmail.com"
+		Password = "synlabs"
 	)
 
 	// Conver plain password to encrypted password

@@ -6,6 +6,7 @@ type Config struct {
 	DB     SqlDatabase
 	JWT    JWTConfig
 	Server Server
+	S3     S3Bucket
 }
 
 type SqlDatabase struct {
@@ -25,6 +26,13 @@ type JWTConfig struct {
 
 type Server struct {
 	Port string `mapstructure:"ServerPort"`
+}
+
+type S3Bucket struct {
+	AccessKeyID     string `mapstructure:"AccessKeyID"`
+	AccessKeySecret string `mapstructure:"AccessKeySecret"`
+	Region          string `mapstructure:"Region"`
+	BucketName      string `mapstructure:"BucketName"`
 }
 
 func InitConfig() (*Config, error) {
@@ -51,5 +59,11 @@ func InitConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = viper.Unmarshal(&c.S3)
+	if err != nil {
+		return nil, err
+	}
+
 	return &c, nil
 }
